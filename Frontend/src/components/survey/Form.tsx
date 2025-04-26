@@ -1,7 +1,8 @@
-import { useState, ChangeEvent, FormEvent } from 'react';
+import { useState, ChangeEvent, FormEvent, useEffect } from 'react';
 import { Loader, Check, } from 'lucide-react';
-import { FormDataType, SubmissionType } from '../../interfaces/surveyInterface';
+import { CountryName, FormDataType, RawCountry, SubmissionType } from '../../interfaces/surveyInterface';
 import useNavigation from '../../hooks/useNavigation';
+import { fetchNationalityData } from '../../apis/api/userApi';
 
 const Form = () => {
 
@@ -18,6 +19,20 @@ const Form = () => {
     message: '',
     date: '',
   });
+  const [nationalities, setNationalities] = useState<CountryName[]>([]);
+
+  useEffect(() => {
+    const getNationalities = async () => {
+      try {
+        const data = await fetchNationalityData();
+        const countryNames: CountryName[] = data.map((country: RawCountry) => ({ name: country.name.common, flag: country.flags.png })).sort((a: CountryName, b: CountryName) => a.name.localeCompare(b.name));
+        setNationalities(countryNames);
+      } catch (error) {
+        console.error("Error fetching nationalities:", error);
+      }
+    };
+    getNationalities();
+  }, []);
 
   // Using Partial<FormDataType> for errors like in Auth component
   const [errors, setErrors] = useState<Partial<FormDataType>>({});
@@ -31,7 +46,7 @@ const Form = () => {
   const handleInputChange = (e: ChangeEvent<HTMLInputElement | HTMLSelectElement | HTMLTextAreaElement>): void => {
     const { name, value } = e.target;
     setFormData({ ...formData, [name]: value });
-    
+
     // Clear error when user types (similar to Auth component)
     if (errors[name as keyof FormDataType]) {
       setErrors({ ...errors, [name]: '' });
@@ -137,7 +152,7 @@ const Form = () => {
                 <option value="">Select Gender</option>
                 <option value="Male">Male</option>
                 <option value="Female">Female</option>
-                <option value="Non-binary">Non-binary</option>
+                <option value="Non-binary">Other</option>
                 <option value="Prefer not to say">Prefer not to say</option>
               </select>
               {errors.gender && <p className="mt-1 text-sm text-red-600">{errors.gender}</p>}
@@ -145,15 +160,20 @@ const Form = () => {
 
             <div className="form-group">
               <label className="block text-sm font-medium text-gray-700 mb-1">Nationality</label>
-              <input
-                type="text"
+              <select
                 name="nationality"
                 value={formData.nationality}
                 onChange={handleInputChange}
                 className={`w-full p-3 border ${errors.nationality ? 'border-red-500' : 'border-gray-300'} rounded-md focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-all`}
-                placeholder="Enter your nationality"
-              />
-              {errors.nationality && <p className="mt-1 text-sm text-red-600">{errors.nationality}</p>}
+              >
+                <option value="">Select Nationality</option>
+                {
+                  nationalities.map((country: CountryName) => (
+                    <option key={country.name} value={country.name}><img src={country.flag} alt={country.name} className="w-5 h-5 mr-2" />{country.name}</option>
+                  ))
+                }
+              </select>
+              {errors.gender && <p className="mt-1 text-sm text-red-600">{errors.nationality}</p>}
             </div>
 
             <div className="form-group">

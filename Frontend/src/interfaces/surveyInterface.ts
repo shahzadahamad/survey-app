@@ -16,3 +16,13 @@ export interface SubmissionType extends FormDataType {
 export interface SubmissionProps {
   role: 'user' | 'admin'
 }
+
+export type CountryName = {
+  name: string;
+  flag: string;
+};
+
+export type RawCountry = {
+  name: { common: string };
+  flags: { png: string };
+};
