@@ -117,7 +117,7 @@ const Auth = ({ mode }: AuthProps) => {
             <div className="form-group">
               <label className="block text-sm font-medium text-gray-700 mb-1">Email Address</label>
               <input
-                type="email"
+                type="text"
                 name="email"
                 value={formData.email}
                 onChange={handleInputChange}

@@ -7,11 +7,6 @@ const Form = () => {
 
   const { goToHome } = useNavigation();
 
-  const handleInputChange = (e: ChangeEvent<HTMLInputElement | HTMLSelectElement | HTMLTextAreaElement>): void => {
-    const { name, value } = e.target;
-    setFormData({ ...formData, [name]: value });
-  };
-
   const [isSubmitting, setIsSubmitting] = useState<boolean>(false);
   const [formData, setFormData] = useState<FormDataType>({
     name: '',
@@ -24,34 +19,90 @@ const Form = () => {
     date: '',
   });
 
+  // Using Partial<FormDataType> for errors like in Auth component
+  const [errors, setErrors] = useState<Partial<FormDataType>>({});
+
   const [submissions, setSubmissions] = useState<SubmissionType[]>([
     { id: 1, name: 'John Doe', gender: 'Male', nationality: 'USA', email: 'john@example.com', phone: '123-456-7890', address: '123 Main St', message: 'Great survey!', date: '24/02/2024' },
     { id: 2, name: 'Jane Smith', gender: 'Female', nationality: 'Canada', email: 'jane@example.com', phone: '987-654-3210', address: '456 Oak Ave', message: 'Looking forward to more surveys!', date: '24/02/2024' },
     { id: 3, name: 'Alex Wong', gender: 'Non-binary', nationality: 'Singapore', email: 'alex@example.com', phone: '555-123-4567', address: '789 Pine Rd', message: 'Thanks for the opportunity!', date: '24/02/2024' },
   ]);
 
+  const handleInputChange = (e: ChangeEvent<HTMLInputElement | HTMLSelectElement | HTMLTextAreaElement>): void => {
+    const { name, value } = e.target;
+    setFormData({ ...formData, [name]: value });
+    
+    // Clear error when user types (similar to Auth component)
+    if (errors[name as keyof FormDataType]) {
+      setErrors({ ...errors, [name]: '' });
+    }
+  };
+
+  const validateForm = (): boolean => {
+    const newErrors: Partial<FormDataType> = {};
+
+    // Required field validations
+    if (!formData.name?.trim()) {
+      newErrors.name = 'Name is required';
+    }
+
+    if (!formData.gender) {
+      newErrors.gender = 'Please select a gender';
+    }
+
+    if (!formData.nationality?.trim()) {
+      newErrors.nationality = 'Nationality is required';
+    }
+
+    if (!formData.email?.trim()) {
+      newErrors.email = 'Email is required';
+    } else if (!/\S+@\S+\.\S+/.test(formData.email)) {
+      newErrors.email = 'Email is invalid';
+    }
+
+    if (!formData.phone?.trim()) {
+      newErrors.phone = 'Phone number is required';
+    } else if (!/^[0-9\-+\s()]{7,20}$/.test(formData.phone)) {
+      newErrors.phone = 'Phone number is invalid';
+    }
+
+    if (!formData.address?.trim()) {
+      newErrors.address = 'Address is required';
+    }
+
+    if (!formData.message?.trim()) {
+      newErrors.message = 'Message is required';
+    }
+
+    setErrors(newErrors);
+    return Object.keys(newErrors).length === 0;
+  };
+
   const handleSubmit = (e: FormEvent<HTMLFormElement>): void => {
     e.preventDefault();
-    setIsSubmitting(true);
 
-    // Simulate API call
-    setTimeout(() => {
-      setSubmissions([
-        ...submissions,
-        { id: submissions.length + 1, ...formData }
-      ]);
-      setFormData({
-        name: '',
-        gender: '',
-        nationality: '',
-        email: '',
-        phone: '',
-        address: '',
-        message: '',
-        date: ''
-      });
-      setIsSubmitting(false);
-    }, 1500);
+    if (validateForm()) {
+      setIsSubmitting(true);
+
+      // Simulate API call
+      setTimeout(() => {
+        setSubmissions([
+          ...submissions,
+          { id: submissions.length + 1, ...formData }
+        ]);
+        setFormData({
+          name: '',
+          gender: '',
+          nationality: '',
+          email: '',
+          phone: '',
+          address: '',
+          message: '',
+          date: ''
+        });
+        setIsSubmitting(false);
+      }, 1500);
+    }
   };
 
   return (
@@ -67,13 +118,11 @@ const Form = () => {
                   name="name"
                   value={formData.name}
                   onChange={handleInputChange}
-                  required
-                  className="w-full p-3 border border-gray-300 rounded-md focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-all"
+
+                  className={`w-full p-3 border ${errors.name ? 'border-red-500' : 'border-gray-300'} rounded-md focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-all`}
                   placeholder="Enter your full name"
                 />
-                <div className="absolute -top-8 left-0 bg-gray-800 text-white p-2 rounded text-xs invisible opacity-0 group-hover:visible group-hover:opacity-100 transition-opacity">
-                  Please enter your full name
-                </div>
+                {errors.name && <p className="mt-1 text-sm text-red-600">{errors.name}</p>}
               </div>
             </div>
 
@@ -83,8 +132,7 @@ const Form = () => {
                 name="gender"
                 value={formData.gender}
                 onChange={handleInputChange}
-                required
-                className="w-full p-3 border border-gray-300 rounded-md focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-all"
+                className={`w-full p-3 border ${errors.gender ? 'border-red-500' : 'border-gray-300'} rounded-md focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-all`}
               >
                 <option value="">Select Gender</option>
                 <option value="Male">Male</option>
@@ -92,6 +140,7 @@ const Form = () => {
                 <option value="Non-binary">Non-binary</option>
                 <option value="Prefer not to say">Prefer not to say</option>
               </select>
+              {errors.gender && <p className="mt-1 text-sm text-red-600">{errors.gender}</p>}
             </div>
 
             <div className="form-group">
@@ -101,23 +150,23 @@ const Form = () => {
                 name="nationality"
                 value={formData.nationality}
                 onChange={handleInputChange}
-                required
-                className="w-full p-3 border border-gray-300 rounded-md focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-all"
+                className={`w-full p-3 border ${errors.nationality ? 'border-red-500' : 'border-gray-300'} rounded-md focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-all`}
                 placeholder="Enter your nationality"
               />
+              {errors.nationality && <p className="mt-1 text-sm text-red-600">{errors.nationality}</p>}
             </div>
 
             <div className="form-group">
               <label className="block text-sm font-medium text-gray-700 mb-1">Email</label>
               <input
-                type="email"
+                type="text"
                 name="email"
                 value={formData.email}
                 onChange={handleInputChange}
-                required
-                className="w-full p-3 border border-gray-300 rounded-md focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-all"
+                className={`w-full p-3 border ${errors.email ? 'border-red-500' : 'border-gray-300'} rounded-md focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-all`}
                 placeholder="Enter your email address"
               />
+              {errors.email && <p className="mt-1 text-sm text-red-600">{errors.email}</p>}
             </div>
 
             <div className="form-group">
@@ -127,10 +176,10 @@ const Form = () => {
                 name="phone"
                 value={formData.phone}
                 onChange={handleInputChange}
-                required
-                className="w-full p-3 border border-gray-300 rounded-md focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-all"
+                className={`w-full p-3 border ${errors.phone ? 'border-red-500' : 'border-gray-300'} rounded-md focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-all`}
                 placeholder="Enter your phone number"
               />
+              {errors.phone && <p className="mt-1 text-sm text-red-600">{errors.phone}</p>}
             </div>
 
             <div className="form-group">
@@ -140,10 +189,10 @@ const Form = () => {
                 name="address"
                 value={formData.address}
                 onChange={handleInputChange}
-                required
-                className="w-full p-3 border border-gray-300 rounded-md focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-all"
+                className={`w-full p-3 border ${errors.address ? 'border-red-500' : 'border-gray-300'} rounded-md focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-all`}
                 placeholder="Enter your address"
               />
+              {errors.address && <p className="mt-1 text-sm text-red-600">{errors.address}</p>}
             </div>
           </div>
 
@@ -154,9 +203,10 @@ const Form = () => {
               value={formData.message}
               onChange={handleInputChange}
               rows={4}
-              className="w-full p-3 border border-gray-300 rounded-md focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-all"
+              className={`w-full p-3 border ${errors.message ? 'border-red-500' : 'border-gray-300'} rounded-md focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-all`}
               placeholder="Enter your message"
             ></textarea>
+            {errors.message && <p className="mt-1 text-sm text-red-600">{errors.message}</p>}
           </div>
 
           <div className="flex justify-between">
