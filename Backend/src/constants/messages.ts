@@ -1,6 +1,7 @@
 export const MESSAGES = {
   SUCCESS: {
     USER_CREATED: 'User created successfully!',
+    USER_LOGGED_IN: 'User logged in!',
   },
 
   ERROR: {

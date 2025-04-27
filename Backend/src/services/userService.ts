@@ -4,7 +4,8 @@ import { IUserRepository } from "../interfaces/repositories/IUserRepository";
 import { IUserService } from "../interfaces/services/IUserService";
 import { IUser } from "../models/userModel";
 import { CustomError } from "../utils/customError";
-import { hashPassword } from "../utils/passwordHasher";
+import { generateToken } from "../utils/jwt";
+import { comparePassword, hashPassword } from "../utils/passwordHasher";
 
 export class UserService implements IUserService {
   private repository: IUserRepository;
@@ -28,7 +29,32 @@ export class UserService implements IUserService {
     const hashedPassword = await hashPassword(userData.password);
     userData.password = hashedPassword;
 
-    const { password, ...userWithoutPassword } = (await this.repository.create(userData)).toObject();
-    return userWithoutPassword;
+    const { password, ...userDataWithoutPassword } = (await this.repository.create(userData)).toObject();
+    return userDataWithoutPassword;
   }
+
+  async login(userData: Partial<IUser>): Promise<{ token: string, userData: IUser }> {
+
+    if (!userData.email || !userData.password) {
+      throw CustomError.validationError(MESSAGES.ERROR.ALL_FIELDS_REQUIRED);
+    }
+
+    const userExist = await this.repository.findByEmail(userData.email);
+
+    if (!userExist) {
+      throw new CustomError(MESSAGES.ERROR.USER_NOT_FOUND, HttpStatusCodes.NOT_FOUND)
+    }
+
+    const isValidPassword = await comparePassword(userData.password, userExist.password);
+
+    if (!isValidPassword) {
+      throw new CustomError(MESSAGES.ERROR.INVALID_CREDENTIALS, HttpStatusCodes.UNAUTHORIZED);
+    }
+
+    const accessToken = await generateToken({ userId: userExist._id, role: 'user' });
+
+    const { password, ...userDataWithoutPassword } = userExist.toObject();
+    return { token: accessToken, userData: userDataWithoutPassword };
+  }
+
 };

@@ -13,10 +13,21 @@ export class UserController implements IUserController {
 
   async create(req: Request, res: Response, next: NextFunction): Promise<void> {
     try {
-      const userData = await this.userService.createUser(req.body);
-      res.status(HttpStatusCodes.CREATED).json({ message: MESSAGES.SUCCESS.USER_CREATED, response: userData });
+      const response = await this.userService.createUser(req.body);
+      res.status(HttpStatusCodes.CREATED).json({ message: MESSAGES.SUCCESS.USER_CREATED, response });
     } catch (error) {
       next(error);
     }
   }
+
+  async login(req: Request, res: Response, next: NextFunction): Promise<void> {
+    try {
+      const response = await this.userService.login(req.body);
+      res.status(HttpStatusCodes.CREATED).json({ message: MESSAGES.SUCCESS.USER_LOGGED_IN, response });
+    } catch (error) {
+      console.log(error);
+      next(error);
+    }
+  }
+
 };
