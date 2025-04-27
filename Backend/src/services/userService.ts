@@ -1,8 +1,8 @@
 import { MESSAGES } from "../constants/messages";
 import { HttpStatusCodes } from "../enums/httpStatusCodes";
+import { IUser } from "../interfaces/models";
 import { IUserRepository } from "../interfaces/repositories/IUserRepository";
 import { IUserService } from "../interfaces/services/IUserService";
-import { IUser } from "../models/userModel";
 import { CustomError } from "../utils/customError";
 import { generateToken } from "../utils/jwt";
 import { comparePassword, hashPassword } from "../utils/passwordHasher";

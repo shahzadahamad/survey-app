@@ -1,4 +1,3 @@
-// src/repositories/base/base.repository.ts
 import { Model, Document } from 'mongoose';
 import { IBaseRepository } from '../interfaces/repositories/IBaseRepository';
 

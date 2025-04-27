@@ -25,7 +25,6 @@ export class UserController implements IUserController {
       const response = await this.userService.login(req.body);
       res.status(HttpStatusCodes.CREATED).json({ message: MESSAGES.SUCCESS.USER_LOGGED_IN, response });
     } catch (error) {
-      console.log(error);
       next(error);
     }
   }

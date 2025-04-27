@@ -12,5 +12,6 @@ export const MESSAGES = {
     INTERNAL_SERVER_ERROR: 'Something went wrong, please try again later.',
     UNAUTHORIZED: 'You are not authorized to perform this action.',
     VALIDATION_ERROR: 'There was a validation error with your request.',
+    SESSION_EXPIRED: 'Your session has expired. Please log in again.',
   },
 };

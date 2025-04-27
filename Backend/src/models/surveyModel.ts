@@ -1,16 +1,5 @@
-import mongoose, { Schema, Document } from "mongoose";
-
-export interface ISurvey extends Document {
-  _id: string;
-  userId: string;
-  name: string;
-  gender: string;
-  nationality: string;
-  email: string;
-  phone: string;
-  address: string;
-  message: string;
-}
+import mongoose, { Schema } from "mongoose";
+import { ISurvey } from "../interfaces/models";
 
 const surveySchema: Schema = new Schema(
   {
