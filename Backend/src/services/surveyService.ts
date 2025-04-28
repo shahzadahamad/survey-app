@@ -14,4 +14,12 @@ export class SurveyService implements ISurveyService {
     return await this.repository.create(surveyData);
   }
 
+  async listUserSurveys(userId: string): Promise<ISurvey[]> {
+    return await this.repository.findByUserId(userId);
+  }
+
+  async listAllSurveys(): Promise<ISurvey[]> {
+    return await this.repository.findAll();
+  }
+
 };

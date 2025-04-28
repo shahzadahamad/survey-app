@@ -7,4 +7,12 @@ export class SurveyRepository extends BaseRepository<ISurvey> implements ISurvey
   constructor() {
     super(SurveyModel);
   }
+
+  async findByUserId(userId: string): Promise<ISurvey[]> {
+    return await SurveyModel.find({ userId });
+  }
+
+  async findAll(): Promise<ISurvey[]> {
+    return await SurveyModel.find();
+  }
 };
