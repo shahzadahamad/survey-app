@@ -1,14 +1,21 @@
 import { useState, ChangeEvent, FormEvent } from 'react';
 import { Eye, EyeOff, Check, Loader, UserPlus, LogIn } from 'lucide-react';
-import { AuthProps, FormDataType } from '../../interfaces/authInterface';
+import { AuthProps, FormDataType } from '../../interfaces/auth';
 import useNavigation from '../../hooks/useNavigation';
+import { authenticateAdmin, authenticateUser, registerUser } from '../../apis/userApi';
+import { AxiosError } from 'axios';
+import { LoginRes } from '../../interfaces/apiResponses';
+import { MESSAGES, VALIDATION_MESSAGES } from '../../constants/messages';
+import { AuthModes } from '../../enums/authMode';
+import { StorageKeys } from '../../enums/storageKeys';
+import toast from 'react-hot-toast';
 
 const Auth = ({ mode }: AuthProps) => {
 
-  const { goToLogin, goToRegister } = useNavigation();
+  const { goToLogin, goToRegister, goToDashboard, goToHome } = useNavigation();
 
   const [formData, setFormData] = useState<FormDataType>({
-    fullName: '',
+    fullname: '',
     email: '',
     password: '',
     confirmPassword: '',
@@ -18,6 +25,7 @@ const Auth = ({ mode }: AuthProps) => {
   const [showConfirmPassword, setShowConfirmPassword] = useState<boolean>(false);
   const [isSubmitting, setIsSubmitting] = useState<boolean>(false);
   const [errors, setErrors] = useState<Partial<FormDataType>>({});
+  const [authError, setAuthError] = useState<string>("");
 
   const handleInputChange = (e: ChangeEvent<HTMLInputElement>): void => {
     const { name, value } = e.target;
@@ -32,43 +40,66 @@ const Auth = ({ mode }: AuthProps) => {
   const validateForm = (): boolean => {
     const newErrors: Partial<FormDataType> = {};
 
-    if (mode === 'register' && !formData.fullName?.trim()) {
-      newErrors.fullName = 'Full name is required';
+    if (mode === AuthModes.REGISTER && !formData.fullname?.trim()) {
+      newErrors.fullname = VALIDATION_MESSAGES.FULLNAME_REQUIRED;
     }
 
     if (!formData.email.trim()) {
-      newErrors.email = 'Email is required';
+      newErrors.email = VALIDATION_MESSAGES.EMAIL_REQUIRED
     } else if (!/\S+@\S+\.\S+/.test(formData.email)) {
-      newErrors.email = 'Email is invalid';
+      newErrors.email = VALIDATION_MESSAGES.EMAIL_INVALID;
     }
 
     if (!formData.password) {
-      newErrors.password = 'Password is required';
-    } else if (mode === 'register' && formData.password.length < 8) {
-      newErrors.password = 'Password must be at least 8 characters';
+      newErrors.password = VALIDATION_MESSAGES.PASSWORD_REQUIRED
+    } else if (mode === AuthModes.REGISTER && formData.password.length < 8) {
+      newErrors.password = VALIDATION_MESSAGES.PASSWORD_MIN_LENGTH
     }
 
-    if (mode === 'register' && formData.password !== formData.confirmPassword) {
-      newErrors.confirmPassword = 'Passwords do not match';
+    if (mode === AuthModes.REGISTER && formData.password !== formData.confirmPassword) {
+      newErrors.confirmPassword = VALIDATION_MESSAGES.PASSWORD_MISMATCH
     }
 
     setErrors(newErrors);
     return Object.keys(newErrors).length === 0;
   };
 
-  const handleSubmit = (e: FormEvent<HTMLFormElement>): void => {
+  const handleSubmit = async (e: FormEvent<HTMLFormElement>): Promise<void> => {
     e.preventDefault();
 
     if (validateForm()) {
       setIsSubmitting(true);
 
-      // Simulate API call
-      setTimeout(() => {
-        console.log(`${mode === 'login' ? 'Login' : 'Registration'} successful`, formData);
+      try {
+        if (mode === AuthModes.LOGIN) {
+          const { response }: LoginRes = await authenticateUser(formData);
+          localStorage.setItem(StorageKeys.ACCESS_TOKEN, response.token);
+          goToHome();
+          toast.success(MESSAGES.SUCCESS.LOGIN_SUCCESS);
+        } else if (mode === AuthModes.REGISTER) {
+          await registerUser(formData);
+          goToLogin();
+          toast.success(MESSAGES.SUCCESS.REGISTRATION_SUCCESS);
+        } else if (mode === AuthModes.ADMIN_LOGIN) {
+          const { response }: LoginRes = await authenticateAdmin(formData);
+          console.log(response);
+          localStorage.setItem(StorageKeys.ADMIN_ACCESS_TOKEN, response.token);
+          goToDashboard();
+          toast.success(MESSAGES.SUCCESS.LOGIN_SUCCESS);
+        }
+      } catch (error) {
+        if (error instanceof AxiosError) {
+          if (error.response) {
+            setAuthError(error.response.data.message);
+          } else {
+            setAuthError(MESSAGES.ERROR.GENERAL_ERROR);
+          }
+        } else {
+          setAuthError(MESSAGES.ERROR.UNEXPECTED_ERROR);
+        }
+      } finally {
         setIsSubmitting(false);
-        // Redirect to survey page
-        window.location.href = '/survey';
-      }, 1500);
+      }
     }
   };
 
@@ -86,12 +117,12 @@ const Auth = ({ mode }: AuthProps) => {
         <div className="bg-blue-600 text-white py-6 px-8">
           <div className="flex items-center justify-between">
             <h1 className="text-2xl font-bold">
-              {mode === 'admin-login' ? 'Welcome Admin' : mode === 'login' ? 'Welcome Back' : 'Create Account'}
+              {mode === AuthModes.ADMIN_LOGIN ? 'Welcome Admin' : mode === AuthModes.LOGIN ? 'Welcome Back' : 'Create Account'}
             </h1>
-            {mode === 'login' || mode === 'admin-login' ? <LogIn size={24} /> : <UserPlus size={24} />}
+            {mode === AuthModes.LOGIN || mode === AuthModes.ADMIN_LOGIN ? <LogIn size={24} /> : <UserPlus size={24} />}
           </div>
           <p className="mt-2 text-blue-100">
-            {mode === 'admin-login' ? 'Welcome to the Survey Administrator Dashboard. Please sign in to access all user survey submissions and manage survey data' : mode === 'login'
+            {mode === AuthModes.ADMIN_LOGIN ? 'Welcome to the Survey Administrator Dashboard. Please sign in to access all user survey submissions and manage survey data' : mode === AuthModes.LOGIN
               ? 'Sign in to access your survey dashboard'
               : 'Join our survey platform to share your valuable feedback'}
           </p>
@@ -99,18 +130,18 @@ const Auth = ({ mode }: AuthProps) => {
 
         <div className="p-8">
           <form onSubmit={handleSubmit} className="space-y-6">
-            {mode === 'register' && (
+            {mode === AuthModes.REGISTER && (
               <div className="form-group">
                 <label className="block text-sm font-medium text-gray-700 mb-1">Full Name</label>
                 <input
                   type="text"
-                  name="fullName"
-                  value={formData.fullName}
+                  name="fullname"
+                  value={formData.fullname}
                   onChange={handleInputChange}
-                  className={`w-full p-3 border ${errors.fullName ? 'border-red-500' : 'border-gray-300'} rounded-md focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-all`}
+                  className={`w-full p-3 border ${errors.fullname ? 'border-red-500' : 'border-gray-300'} rounded-md focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-all`}
                   placeholder="Enter your full name"
                 />
-                {errors.fullName && <p className="mt-1 text-sm text-red-600">{errors.fullName}</p>}
+                {errors.fullname && <p className="mt-1 text-sm text-red-600">{errors.fullname}</p>}
               </div>
             )}
 
@@ -136,7 +167,7 @@ const Auth = ({ mode }: AuthProps) => {
                   value={formData.password}
                   onChange={handleInputChange}
                   className={`w-full p-3 border ${errors.password ? 'border-red-500' : 'border-gray-300'} rounded-md focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-all`}
-                  placeholder={mode === 'login' || mode === 'admin-login' ? "Enter your password" : "Create a password"}
+                  placeholder={mode === AuthModes.LOGIN || mode === AuthModes.ADMIN_LOGIN ? "Enter your password" : "Create a password"}
                 />
                 <button
                   type="button"
@@ -147,10 +178,10 @@ const Auth = ({ mode }: AuthProps) => {
                 </button>
               </div>
               {errors.password && <p className="mt-1 text-sm text-red-600">{errors.password}</p>}
-              {mode === 'register' && <p className="mt-1 text-xs text-gray-500">Password must be at least 8 characters</p>}
+              {mode === AuthModes.REGISTER && <p className="mt-1 text-xs text-gray-500">Password must be at least 8 characters</p>}
             </div>
 
-            {mode === 'register' && (
+            {mode === AuthModes.REGISTER && (
               <div className="form-group">
                 <label className="block text-sm font-medium text-gray-700 mb-1">Confirm Password</label>
                 <div className="relative">
@@ -174,6 +205,8 @@ const Auth = ({ mode }: AuthProps) => {
               </div>
             )}
 
+            {authError && <p className="mt-1 text-sm text-center text-red-600">{authError}</p>}
+
             <div className="form-group">
               <button
                 type="submit"
@@ -183,21 +216,21 @@ const Auth = ({ mode }: AuthProps) => {
                 {isSubmitting ? (
                   <>
                     <Loader size={18} className="animate-spin" />
-                    <span>{mode === 'login' || mode=== 'admin-login' ? 'Signing In...' : 'Creating Account...'}</span>
+                    <span>{mode === AuthModes.LOGIN || mode === AuthModes.REGISTER ? 'Signing In...' : 'Creating Account...'}</span>
                   </>
                 ) : (
                   <>
                     <Check size={18} />
-                    <span>{mode === 'login' || mode === 'admin-login' ? 'Sign In' : 'Register'}</span>
+                    <span>{mode === AuthModes.LOGIN || mode === AuthModes.REGISTER ? 'Sign In' : 'Register'}</span>
                   </>
                 )}
               </button>
             </div>
 
             {
-              mode !== 'admin-login' && (
+              mode !== AuthModes.ADMIN_LOGIN && (
                 <div className="text-center mt-4">
-                  {mode === 'login' ? (
+                  {mode === AuthModes.LOGIN ? (
                     <p className="text-gray-600">
                       Don't have an account?{" "}
                       <button

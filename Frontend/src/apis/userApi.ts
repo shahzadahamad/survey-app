@@ -1,0 +1,25 @@
+import { API_URLS } from "../constants/apiUrls";
+import { LoginRes, RegisterRes } from "../interfaces/apiResponses";
+import { FormDataType } from "../interfaces/auth";
+import apiClient, { adminApiClient, apiCustom } from "./apiClient";
+
+export const fetchNationalityData = async () => {
+  const response = await apiCustom.get(API_URLS.ALL_COUNTRIES);
+  return response.data;
+}
+
+export const authenticateUser = async (formData: Partial<FormDataType>): Promise<LoginRes> => {
+  const response = await apiClient.post(API_URLS.AUTHENTICATE_USER, formData);
+  return response.data;
+}
+
+export const registerUser = async (formData: FormDataType): Promise<RegisterRes> => {
+  const response = await apiClient.post(API_URLS.REGISTERUSER, formData);
+  return response.data;
+}
+
+//Admin
+export const authenticateAdmin = async (formData: Partial<FormDataType>): Promise<LoginRes> => {
+  const response = await adminApiClient.post(API_URLS.AUTHENTICATE_ADMIN, formData);
+  return response.data;
+}

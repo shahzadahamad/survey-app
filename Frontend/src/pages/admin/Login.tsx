@@ -1,8 +1,9 @@
 import Auth from "../../components/auth/Auth"
+import { AuthModes } from "../../enums/authMode"
 
 const Login = () => {
   return (
-    <Auth mode={'admin-login'}/>
+    <Auth mode={AuthModes.ADMIN_LOGIN} />
   )
 }
 

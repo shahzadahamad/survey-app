@@ -26,3 +26,8 @@ export type RawCountry = {
   name: { common: string };
   flags: { png: string };
 };
+
+export interface HeaderProps {
+  title: string;
+  role: string;
+}

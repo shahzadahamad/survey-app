@@ -1,8 +1,9 @@
 import { useState, ChangeEvent, FormEvent, useEffect } from 'react';
 import { Loader, Check, } from 'lucide-react';
-import { CountryName, FormDataType, RawCountry, SubmissionType } from '../../interfaces/surveyInterface';
+import { CountryName, FormDataType, RawCountry, SubmissionType } from '../../interfaces/survey';
 import useNavigation from '../../hooks/useNavigation';
-import { fetchNationalityData } from '../../apis/api/userApi';
+import { fetchNationalityData } from '../../apis/userApi';
+import { MESSAGES, VALIDATION_MESSAGES } from '../../constants/messages';
 
 const Form = () => {
 
@@ -28,7 +29,7 @@ const Form = () => {
         const countryNames: CountryName[] = data.map((country: RawCountry) => ({ name: country.name.common, flag: country.flags.png })).sort((a: CountryName, b: CountryName) => a.name.localeCompare(b.name));
         setNationalities(countryNames);
       } catch (error) {
-        console.error("Error fetching nationalities:", error);
+        console.error(MESSAGES.ERROR.GENERAL_ERROR, error);
       }
     };
     getNationalities();
@@ -58,35 +59,35 @@ const Form = () => {
 
     // Required field validations
     if (!formData.name?.trim()) {
-      newErrors.name = 'Name is required';
+      newErrors.name = VALIDATION_MESSAGES.FULLNAME_REQUIRED
     }
 
     if (!formData.gender) {
-      newErrors.gender = 'Please select a gender';
+      newErrors.gender = VALIDATION_MESSAGES.GENDER_REQUIRED
     }
 
     if (!formData.nationality?.trim()) {
-      newErrors.nationality = 'Nationality is required';
+      newErrors.nationality = VALIDATION_MESSAGES.NATIONALITY_REQUIRED
     }
 
     if (!formData.email?.trim()) {
-      newErrors.email = 'Email is required';
+      newErrors.email = VALIDATION_MESSAGES.EMAIL_REQUIRED
     } else if (!/\S+@\S+\.\S+/.test(formData.email)) {
-      newErrors.email = 'Email is invalid';
+      newErrors.email = VALIDATION_MESSAGES.EMAIL_INVALID
     }
 
     if (!formData.phone?.trim()) {
-      newErrors.phone = 'Phone number is required';
+      newErrors.phone = VALIDATION_MESSAGES.PHONE_REQUIRED
     } else if (!/^[0-9\-+\s()]{7,20}$/.test(formData.phone)) {
-      newErrors.phone = 'Phone number is invalid';
+      newErrors.phone = VALIDATION_MESSAGES.PHONE_INVALID
     }
 
     if (!formData.address?.trim()) {
-      newErrors.address = 'Address is required';
+      newErrors.address = VALIDATION_MESSAGES.ADDRESS_REQUIRED
     }
 
     if (!formData.message?.trim()) {
-      newErrors.message = 'Message is required';
+      newErrors.message = VALIDATION_MESSAGES.MESSAGE_REQUIRED
     }
 
     setErrors(newErrors);
@@ -126,7 +127,7 @@ const Form = () => {
         <form onSubmit={handleSubmit} className="space-y-6">
           <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
             <div className="form-group">
-              <label className="block text-sm font-medium text-gray-700 mb-1">Name</label>
+              <label className="block text-sm font-medium text-gray-700 mb-1">Full Name</label>
               <div className="relative">
                 <input
                   type="text"

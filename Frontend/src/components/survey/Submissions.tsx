@@ -1,6 +1,6 @@
 import { useState, useEffect, useMemo } from "react";
 import useNavigation from "../../hooks/useNavigation";
-import { SubmissionProps, SubmissionType } from "../../interfaces/surveyInterface";
+import { SubmissionProps, SubmissionType } from "../../interfaces/survey";
 
 const Submissions = ({ role }: SubmissionProps) => {
   const { goToHome } = useNavigation();

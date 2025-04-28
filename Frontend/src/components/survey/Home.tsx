@@ -1,14 +1,18 @@
 import { ChevronRight, Database, FileText } from 'lucide-react';
 import useNavigation from '../../hooks/useNavigation';
+import { isLoggedIn } from '../../helpers/isLoggedIn';
+import toast from 'react-hot-toast';
+import { MESSAGES } from '../../constants/messages';
 
 const Home = () => {
   const { goToSurveyForm, goToSurveySubmissions } = useNavigation();
+  const isUserLoggedIN = isLoggedIn();
   return (
     <div className="flex-1 bg-gradient-to-br from-blue-50 to-indigo-50 flex items-center justify-center">
       <div className="flex flex-col items-center justify-center gap-10 py-12 px-4 max-w-2xl mx-auto text-center">
         <div className="flex flex-col items-center gap-3">
           <button
-            onClick={() => goToSurveyForm()}
+            onClick={() => isUserLoggedIN ? goToSurveyForm() : toast.error(MESSAGES.ERROR.SURVEY_FORM_SUBMISSION, { position: 'top-center' })}
             className="flex items-center gap-2 bg-green-600 hover:bg-green-700 text-white font-bold py-3 px-6 rounded-md transition-all transform hover:scale-105 shadow-lg w-64 justify-center"
           >
             <FileText size={20} />
@@ -22,7 +26,7 @@ const Home = () => {
 
         <div className="flex flex-col items-center gap-3">
           <button
-            onClick={() => goToSurveySubmissions()}
+            onClick={() => isUserLoggedIN ? goToSurveySubmissions() : toast.error(MESSAGES.ERROR.SURVEY_VIEW_SUBMISSION, { position: 'top-center' })}
             className="flex items-center gap-2 bg-purple-600 hover:bg-purple-700 text-white font-bold py-3 px-6 rounded-md transition-all transform hover:scale-105 shadow-lg w-64 justify-center"
           >
             <Database size={20} />

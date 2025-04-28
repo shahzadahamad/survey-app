@@ -1,8 +1,9 @@
 import Auth from '../../components/auth/Auth'
+import { AuthModes } from '../../enums/authMode'
 
 const Register = () => {
   return (
-    <Auth mode={'register'}/>
+    <Auth mode={AuthModes.REGISTER} />
   )
 }
 
