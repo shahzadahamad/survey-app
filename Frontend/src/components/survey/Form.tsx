@@ -12,15 +12,7 @@ const Form = () => {
   const { goToHome } = useNavigation();
 
   const [isSubmitting, setIsSubmitting] = useState<boolean>(false);
-  const [formData, setFormData] = useState<FormDataType>({
-    name: '',
-    gender: '',
-    nationality: '',
-    email: '',
-    phone: '',
-    address: '',
-    message: '',
-  });
+  const [formData, setFormData] = useState<FormDataType>({ name: '', gender: '', nationality: '', email: '', phone: '', address: '', message: '', });
   const [nationalities, setNationalities] = useState<CountryName[]>([]);
   const [authError, setAuthError] = useState<string>("");
 
@@ -100,15 +92,7 @@ const Form = () => {
       try {
         await createSurvey(formData);
         toast.success(MESSAGES.SUCCESS.SURVEY_SUBMITTED);
-        setFormData({
-          name: '',
-          gender: '',
-          nationality: '',
-          email: '',
-          phone: '',
-          address: '',
-          message: '',
-        });
+        setFormData({ name: '', gender: '', nationality: '', email: '', phone: '', address: '', message: '', });
       } catch (error) {
         if (error instanceof AxiosError) {
           if (error.response) {
@@ -133,12 +117,7 @@ const Form = () => {
             <div className="form-group">
               <label className="block text-sm font-medium text-gray-700 mb-1">Full Name</label>
               <div className="relative">
-                <input
-                  type="text"
-                  name="name"
-                  value={formData.name}
-                  onChange={handleInputChange}
-
+                <input type="text" name="name" value={formData.name} onChange={handleInputChange}
                   className={`w-full p-3 border ${errors.name ? 'border-red-500' : 'border-gray-300'} rounded-md focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-all`}
                   placeholder="Enter your full name"
                 />
@@ -148,12 +127,7 @@ const Form = () => {
 
             <div className="form-group">
               <label className="block text-sm font-medium text-gray-700 mb-1">Gender</label>
-              <select
-                name="gender"
-                value={formData.gender}
-                onChange={handleInputChange}
-                className={`w-full p-3 border ${errors.gender ? 'border-red-500' : 'border-gray-300'} rounded-md focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-all`}
-              >
+              <select name="gender" value={formData.gender} onChange={handleInputChange} className={`w-full p-3 border ${errors.gender ? 'border-red-500' : 'border-gray-300'} rounded-md focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-all`}>
                 <option value="">Select Gender</option>
                 <option value="Male">Male</option>
                 <option value="Female">Female</option>
@@ -165,12 +139,7 @@ const Form = () => {
 
             <div className="form-group">
               <label className="block text-sm font-medium text-gray-700 mb-1">Nationality</label>
-              <select
-                name="nationality"
-                value={formData.nationality}
-                onChange={handleInputChange}
-                className={`w-full p-3 border ${errors.nationality ? 'border-red-500' : 'border-gray-300'} rounded-md focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-all`}
-              >
+              <select name="nationality" value={formData.nationality} onChange={handleInputChange} className={`w-full p-3 border ${errors.nationality ? 'border-red-500' : 'border-gray-300'} rounded-md focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-all`} >
                 <option value="">Select Nationality</option>
                 {
                   nationalities.map((country: CountryName) => (
@@ -183,72 +152,34 @@ const Form = () => {
 
             <div className="form-group">
               <label className="block text-sm font-medium text-gray-700 mb-1">Email</label>
-              <input
-                type="text"
-                name="email"
-                value={formData.email}
-                onChange={handleInputChange}
-                className={`w-full p-3 border ${errors.email ? 'border-red-500' : 'border-gray-300'} rounded-md focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-all`}
-                placeholder="Enter your email address"
-              />
+              <input type="text" name="email" value={formData.email} onChange={handleInputChange} className={`w-full p-3 border ${errors.email ? 'border-red-500' : 'border-gray-300'} rounded-md focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-all`} placeholder="Enter your email address" />
               {errors.email && <p className="mt-1 text-sm text-red-600">{errors.email}</p>}
             </div>
 
             <div className="form-group">
               <label className="block text-sm font-medium text-gray-700 mb-1">Phone Number</label>
-              <input
-                type="tel"
-                name="phone"
-                value={formData.phone}
-                onChange={handleInputChange}
-                className={`w-full p-3 border ${errors.phone ? 'border-red-500' : 'border-gray-300'} rounded-md focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-all`}
-                placeholder="Enter your phone number"
-              />
+              <input type="tel" name="phone" value={formData.phone} onChange={handleInputChange} className={`w-full p-3 border ${errors.phone ? 'border-red-500' : 'border-gray-300'} rounded-md focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-all`} placeholder="Enter your phone number" />
               {errors.phone && <p className="mt-1 text-sm text-red-600">{errors.phone}</p>}
             </div>
 
             <div className="form-group">
               <label className="block text-sm font-medium text-gray-700 mb-1">Address</label>
-              <input
-                type="text"
-                name="address"
-                value={formData.address}
-                onChange={handleInputChange}
-                className={`w-full p-3 border ${errors.address ? 'border-red-500' : 'border-gray-300'} rounded-md focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-all`}
-                placeholder="Enter your address"
-              />
+              <input type="text" name="address" value={formData.address} onChange={handleInputChange} className={`w-full p-3 border ${errors.address ? 'border-red-500' : 'border-gray-300'} rounded-md focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-all`} placeholder="Enter your address" />
               {errors.address && <p className="mt-1 text-sm text-red-600">{errors.address}</p>}
             </div>
           </div>
 
           <div className="form-group">
             <label className="block text-sm font-medium text-gray-700 mb-1">Message</label>
-            <textarea
-              name="message"
-              value={formData.message}
-              onChange={handleInputChange}
-              rows={4}
-              className={`w-full p-3 border ${errors.message ? 'border-red-500' : 'border-gray-300'} rounded-md focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-all`}
-              placeholder="Enter your message"
-            ></textarea>
+            <textarea name="message" value={formData.message} onChange={handleInputChange} rows={4} className={`w-full p-3 border ${errors.message ? 'border-red-500' : 'border-gray-300'} rounded-md focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-all`} placeholder="Enter your message"></textarea>
             {errors.message && <p className="mt-1 text-sm text-red-600">{errors.message}</p>}
           </div>
 
           {authError && <p className="mt-1 text-sm text-center text-red-600">{authError}</p>}
 
           <div className="flex justify-between">
-            <button
-              onClick={() => goToHome()}
-              type="button"
-              className="bg-gray-500 hover:bg-gray-600 text-white py-2 px-6 rounded-md transition-all"
-            >
-              Cancel
-            </button>
-            <button
-              type="submit"
-              disabled={isSubmitting}
-              className="bg-blue-600 hover:bg-blue-700 text-white py-2 px-6 rounded-md transition-all flex items-center gap-2"
-            >
+            <button onClick={() => goToHome()} type="button" className="bg-gray-500 hover:bg-gray-600 text-white py-2 px-6 rounded-md transition-all">Cancel</button>
+            <button type="submit" disabled={isSubmitting} className="bg-blue-600 hover:bg-blue-700 text-white py-2 px-6 rounded-md transition-all flex items-center gap-2">
               {isSubmitting ? (
                 <>
                   <Loader size={18} className="animate-spin" />

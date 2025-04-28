@@ -24,6 +24,16 @@ export const createSurvey = async (formData: SurveyFormData) => {
   return response.data;
 }
 
+export const listUserSubmissions = async () => {
+  const response = await apiClient.get(API_URLS.USER_SUBMISSIONS);
+  return response.data;
+}
+
+export const listAllSubmissions = async () => {
+  const response = await apiClient.get(API_URLS.ALL_SUBMISSIONS);
+  return response.data;
+}
+
 //Admin
 export const authenticateAdmin = async (formData: Partial<FormDataType>): Promise<LoginRes> => {
   const response = await adminApiClient.post(API_URLS.AUTHENTICATE_ADMIN, formData);

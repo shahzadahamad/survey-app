@@ -9,7 +9,7 @@ export interface FormDataType {
 }
 
 export interface SubmissionType extends FormDataType {
-  id: number;
+  _id: number;
 }
 
 export interface SubmissionProps {
