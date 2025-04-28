@@ -35,6 +35,7 @@ const Auth = ({ mode }: AuthProps) => {
     if (errors[name as keyof FormDataType]) {
       setErrors({ ...errors, [name]: '' });
     }
+    setAuthError("");
   };
 
   const validateForm = (): boolean => {
