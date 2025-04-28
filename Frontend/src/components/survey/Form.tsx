@@ -1,9 +1,11 @@
 import { useState, ChangeEvent, FormEvent, useEffect } from 'react';
 import { Loader, Check, } from 'lucide-react';
-import { CountryName, FormDataType, RawCountry, SubmissionType } from '../../interfaces/survey';
+import { CountryName, FormDataType, RawCountry } from '../../interfaces/survey';
 import useNavigation from '../../hooks/useNavigation';
-import { fetchNationalityData } from '../../apis/userApi';
+import { createSurvey, fetchNationalityData } from '../../apis/apis';
 import { MESSAGES, VALIDATION_MESSAGES } from '../../constants/messages';
+import toast from 'react-hot-toast';
+import { AxiosError } from 'axios';
 
 const Form = () => {
 
@@ -18,9 +20,9 @@ const Form = () => {
     phone: '',
     address: '',
     message: '',
-    date: '',
   });
   const [nationalities, setNationalities] = useState<CountryName[]>([]);
+  const [authError, setAuthError] = useState<string>("");
 
   useEffect(() => {
     const getNationalities = async () => {
@@ -37,12 +39,6 @@ const Form = () => {
 
   // Using Partial<FormDataType> for errors like in Auth component
   const [errors, setErrors] = useState<Partial<FormDataType>>({});
-
-  const [submissions, setSubmissions] = useState<SubmissionType[]>([
-    { id: 1, name: 'John Doe', gender: 'Male', nationality: 'USA', email: 'john@example.com', phone: '123-456-7890', address: '123 Main St', message: 'Great survey!', date: '24/02/2024' },
-    { id: 2, name: 'Jane Smith', gender: 'Female', nationality: 'Canada', email: 'jane@example.com', phone: '987-654-3210', address: '456 Oak Ave', message: 'Looking forward to more surveys!', date: '24/02/2024' },
-    { id: 3, name: 'Alex Wong', gender: 'Non-binary', nationality: 'Singapore', email: 'alex@example.com', phone: '555-123-4567', address: '789 Pine Rd', message: 'Thanks for the opportunity!', date: '24/02/2024' },
-  ]);
 
   const handleInputChange = (e: ChangeEvent<HTMLInputElement | HTMLSelectElement | HTMLTextAreaElement>): void => {
     const { name, value } = e.target;
@@ -88,24 +84,22 @@ const Form = () => {
 
     if (!formData.message?.trim()) {
       newErrors.message = VALIDATION_MESSAGES.MESSAGE_REQUIRED
+    } else if (formData.message.trim().length < 10) {
+      newErrors.message = VALIDATION_MESSAGES.MESSAGE_MIN_LENGTH
     }
 
     setErrors(newErrors);
     return Object.keys(newErrors).length === 0;
   };
 
-  const handleSubmit = (e: FormEvent<HTMLFormElement>): void => {
+  const handleSubmit = async (e: FormEvent<HTMLFormElement>): Promise<void> => {
     e.preventDefault();
 
     if (validateForm()) {
       setIsSubmitting(true);
-
-      // Simulate API call
-      setTimeout(() => {
-        setSubmissions([
-          ...submissions,
-          { id: submissions.length + 1, ...formData }
-        ]);
+      try {
+        await createSurvey(formData);
+        toast.success(MESSAGES.SUCCESS.SURVEY_SUBMITTED);
         setFormData({
           name: '',
           gender: '',
@@ -114,10 +108,20 @@ const Form = () => {
           phone: '',
           address: '',
           message: '',
-          date: ''
         });
+      } catch (error) {
+        if (error instanceof AxiosError) {
+          if (error.response) {
+            setAuthError(error.response.data.message);
+          } else {
+            setAuthError(MESSAGES.ERROR.GENERAL_ERROR);
+          }
+        } else {
+          setAuthError(MESSAGES.ERROR.UNEXPECTED_ERROR);
+        }
+      } finally {
         setIsSubmitting(false);
-      }, 1500);
+      }
     }
   };
 
@@ -229,6 +233,8 @@ const Form = () => {
             ></textarea>
             {errors.message && <p className="mt-1 text-sm text-red-600">{errors.message}</p>}
           </div>
+
+          {authError && <p className="mt-1 text-sm text-center text-red-600">{authError}</p>}
 
           <div className="flex justify-between">
             <button

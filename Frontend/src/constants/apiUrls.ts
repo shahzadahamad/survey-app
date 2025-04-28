@@ -3,4 +3,5 @@ export const API_URLS = {
   AUTHENTICATE_USER: '/auth/login',
   AUTHENTICATE_ADMIN: '/auth/admin/login',
   REGISTERUSER: '/auth/register',
+  CREATE_SURVEY: '/survey/create'
 };

@@ -6,7 +6,6 @@ export interface FormDataType {
   phone: string;
   address: string;
   message: string;
-  date: string;
 }
 
 export interface SubmissionType extends FormDataType {

@@ -10,6 +10,7 @@ export const MESSAGES = {
   SUCCESS: {
     LOGIN_SUCCESS: "Login successful.",
     LOGOUT_SUCCESS: "Logout succesful.",
+    SURVEY_SUBMITTED: "Survey submitted successfully!",
     REGISTRATION_SUCCESS: "Registration successful. Please log in.",
   }
 };
@@ -27,4 +28,5 @@ export const VALIDATION_MESSAGES = {
   PHONE_INVALID: 'Phone number is invalid',
   ADDRESS_REQUIRED: 'Address is required',
   MESSAGE_REQUIRED: 'Message is required',
+  MESSAGE_MIN_LENGTH: 'Message must be at least 10 characters long.',
 };

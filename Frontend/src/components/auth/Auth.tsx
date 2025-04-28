@@ -2,7 +2,7 @@ import { useState, ChangeEvent, FormEvent } from 'react';
 import { Eye, EyeOff, Check, Loader, UserPlus, LogIn } from 'lucide-react';
 import { AuthProps, FormDataType } from '../../interfaces/auth';
 import useNavigation from '../../hooks/useNavigation';
-import { authenticateAdmin, authenticateUser, registerUser } from '../../apis/userApi';
+import { authenticateAdmin, authenticateUser, registerUser } from '../../apis/apis';
 import { AxiosError } from 'axios';
 import { LoginRes } from '../../interfaces/apiResponses';
 import { MESSAGES, VALIDATION_MESSAGES } from '../../constants/messages';

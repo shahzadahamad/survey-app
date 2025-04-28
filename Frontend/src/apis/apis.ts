@@ -1,6 +1,7 @@
 import { API_URLS } from "../constants/apiUrls";
 import { LoginRes, RegisterRes } from "../interfaces/apiResponses";
 import { FormDataType } from "../interfaces/auth";
+import { FormDataType as SurveyFormData } from '../interfaces/survey';
 import apiClient, { adminApiClient, apiCustom } from "./apiClient";
 
 export const fetchNationalityData = async () => {
@@ -15,6 +16,11 @@ export const authenticateUser = async (formData: Partial<FormDataType>): Promise
 
 export const registerUser = async (formData: FormDataType): Promise<RegisterRes> => {
   const response = await apiClient.post(API_URLS.REGISTERUSER, formData);
+  return response.data;
+}
+
+export const createSurvey = async (formData: SurveyFormData) => {
+  const response = await apiClient.post(API_URLS.CREATE_SURVEY, formData);
   return response.data;
 }
 
