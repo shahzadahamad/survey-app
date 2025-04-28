@@ -1,4 +1,3 @@
-import { MESSAGES } from "../constants/messages";
 import { HttpStatusCodes } from "../enums/httpStatusCodes";
 
 export class CustomError extends Error {

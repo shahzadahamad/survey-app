@@ -16,10 +16,16 @@ const authMiddleware = (req: AuthRequest, res: Response, next: NextFunction) => 
     const decoded = verifyToken(token);
     req.user = decoded;
     next();
-  } catch (error) {
-    return next(new CustomError(MESSAGES.ERROR.SESSION_EXPIRED, HttpStatusCodes.UNAUTHORIZED));
-  };
-
+  } catch (error: unknown) {
+    if (error instanceof Error) {
+      if (error.name === 'TokenExpiredError') {
+        return next(new CustomError(MESSAGES.ERROR.SESSION_EXPIRED, HttpStatusCodes.UNAUTHORIZED));
+      } else if (error.name === 'JsonWebTokenError') {
+        return next(new CustomError(MESSAGES.ERROR.INVALID_TOKEN, HttpStatusCodes.UNAUTHORIZED));
+      }
+    }
+    return next(new CustomError(MESSAGES.ERROR.UNAUTHORIZED, HttpStatusCodes.UNAUTHORIZED));
+  }
 }
 
 export default authMiddleware;

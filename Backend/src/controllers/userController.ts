@@ -1,4 +1,4 @@
-import { NextFunction, Request, response, Response } from "express";
+import { NextFunction, Request, Response } from "express";
 import { IUserController } from "../interfaces/controllers/IUserController";
 import { IUserService } from "../interfaces/services/IUserService";
 import { HttpStatusCodes } from "../enums/httpStatusCodes";

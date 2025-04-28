@@ -18,3 +18,9 @@ export interface IUser extends Document {
   email: string;
   password: string;
 }
+
+export interface IAdmin extends Document {
+  _id: string;
+  email: string;
+  password: string;
+}
