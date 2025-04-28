@@ -30,3 +30,9 @@ export interface HeaderProps {
   title: string;
   role: string;
 }
+
+export interface SurveyDetialsProps {
+  submission: SubmissionType;
+  isOpen: boolean;
+  onClose: () => void;
+}

@@ -4,6 +4,7 @@ import { SubmissionProps, SubmissionType } from "../../interfaces/survey";
 import { MESSAGES } from "../../constants/messages";
 import { UserRoles } from "../../enums/userRoles";
 import { listAllSubmissions, listUserSubmissions } from "../../apis/apis";
+import SurveyModal from "./SurveyModal";
 
 const Submissions = ({ role }: SubmissionProps) => {
   const { goToHome } = useNavigation();
@@ -15,6 +16,10 @@ const Submissions = ({ role }: SubmissionProps) => {
     key: null,
     direction: null,
   });
+  const [isModalOpen, setIsModalOpen] = useState(false);
+  const [modalData, setModalData] = useState<SubmissionType | null>(null);
+
+  const closeModal = () => setIsModalOpen(false);
 
   useEffect(() => {
     const getNationalities = async () => {
@@ -188,6 +193,7 @@ const Submissions = ({ role }: SubmissionProps) => {
     { key: 'phone', label: 'Phone' },
     { key: 'address', label: 'Address' },
     { key: 'message', label: 'Message' },
+    { key: 'action', label: 'Action' }
   ];
 
   return (
@@ -251,6 +257,12 @@ const Submissions = ({ role }: SubmissionProps) => {
                     <td className="py-4 px-4 text-sm text-gray-800">{submission.phone}</td>
                     <td className="py-4 px-4 text-sm text-gray-800">{submission.address}</td>
                     <td className="py-4 px-4 text-sm text-gray-800">{submission.message}</td>
+                    <td className="py-4 px-4 text-sm text-gray-800">
+                      <button onClick={() => {
+                        setModalData(submission)
+                        setIsModalOpen(true);
+                      }} className="px-4 py-2 bg-blue-600 text-white rounded-md hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-opacity-50 transition-colors">View</button>
+                    </td>
                   </tr>
                 ))
               ) : (
@@ -261,6 +273,12 @@ const Submissions = ({ role }: SubmissionProps) => {
             </tbody>
           </table>
         </div>
+
+        <SurveyModal
+          submission={modalData as SubmissionType}
+          isOpen={isModalOpen}
+          onClose={closeModal}
+        />
 
         {/* Pagination controls */}
         <div className="flex flex-col sm:flex-row justify-between items-center gap-2">
