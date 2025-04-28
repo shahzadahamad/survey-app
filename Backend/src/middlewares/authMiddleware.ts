@@ -3,7 +3,7 @@ import { verifyToken } from '../utils/jwt';
 import { CustomError } from '../utils/customError';
 import { HttpStatusCodes } from '../enums/httpStatusCodes';
 import { MESSAGES } from '../constants/messages';
-import { AuthRequest } from '../interfaces/auth';
+import { AuthRequest, JwtCustomPayload } from '../interfaces/auth';
 
 const authMiddleware = (req: AuthRequest, res: Response, next: NextFunction) => {
   const token = req.header('Authorization')?.replace('Bearer ', '');
@@ -14,7 +14,7 @@ const authMiddleware = (req: AuthRequest, res: Response, next: NextFunction) => 
 
   try {
     const decoded = verifyToken(token);
-    req.user = decoded;
+    req.user = decoded as JwtCustomPayload;
     next();
   } catch (error: unknown) {
     if (error instanceof Error) {
