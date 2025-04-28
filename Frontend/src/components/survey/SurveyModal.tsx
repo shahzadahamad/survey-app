@@ -19,7 +19,7 @@ const SurveyModal: React.FC<SurveyDetialsProps> = ({ submission, isOpen, onClose
       <div className="bg-white rounded-lg shadow-xl w-full max-w-md mx-4 overflow-hidden">
         {/* Modal Header */}
         <div className="bg-gray-100 px-6 py-4 border-b flex justify-between items-center">
-          <h3 className="text-lg font-medium text-gray-900">User Details</h3>
+          <h3 className="text-lg font-medium text-gray-900">Survey Details</h3>
           <button
             onClick={onClose}
             className="text-gray-400 hover:text-gray-600 focus:outline-none"
