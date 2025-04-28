@@ -4,6 +4,8 @@ import { StorageKeys } from "../../enums/storageKeys";
 import { HeaderProps } from "../../interfaces/survey";
 import { UserRoles } from "../../enums/userRoles";
 import useNavigation from "../../hooks/useNavigation";
+import toast from "react-hot-toast";
+import { MESSAGES } from "../../constants/messages";
 
 const Header: React.FC<HeaderProps> = ({ title, role }) => {
   const isUserLoggedIN = isLoggedIn();
@@ -15,14 +17,16 @@ const Header: React.FC<HeaderProps> = ({ title, role }) => {
       if (isUserLoggedIN) {
         localStorage.removeItem(StorageKeys.ACCESS_TOKEN);
         goToHome();
+        toast.success(MESSAGES.SUCCESS.LOGOUT_SUCCESS);
       } else {
         goToLogin();
       }
     } else if (role === UserRoles.ADMIN) {
       if (isAdmLoggedIn) {
         localStorage.removeItem(StorageKeys.ADMIN_ACCESS_TOKEN);
+        toast.success(MESSAGES.SUCCESS.LOGOUT_SUCCESS);
       }
-      goToAdminLogin()
+      goToAdminLogin();
     }
   }
 

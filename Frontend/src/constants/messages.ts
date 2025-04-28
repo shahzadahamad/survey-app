@@ -9,6 +9,7 @@ export const MESSAGES = {
   },
   SUCCESS: {
     LOGIN_SUCCESS: "Login successful.",
+    LOGOUT_SUCCESS: "Logout succesful.",
     REGISTRATION_SUCCESS: "Registration successful. Please log in.",
   }
 };

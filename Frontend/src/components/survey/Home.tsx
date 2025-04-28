@@ -12,7 +12,7 @@ const Home = () => {
       <div className="flex flex-col items-center justify-center gap-10 py-12 px-4 max-w-2xl mx-auto text-center">
         <div className="flex flex-col items-center gap-3">
           <button
-            onClick={() => isUserLoggedIN ? goToSurveyForm() : toast.error(MESSAGES.ERROR.SURVEY_FORM_SUBMISSION, { position: 'top-center' })}
+            onClick={() => isUserLoggedIN ? goToSurveyForm() : toast.error(MESSAGES.ERROR.SURVEY_FORM_SUBMISSION)}
             className="flex items-center gap-2 bg-green-600 hover:bg-green-700 text-white font-bold py-3 px-6 rounded-md transition-all transform hover:scale-105 shadow-lg w-64 justify-center"
           >
             <FileText size={20} />

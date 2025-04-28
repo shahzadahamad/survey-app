@@ -1,6 +1,6 @@
 import { ReactNode } from 'react';
 
-export interface ProtectedRouteProps {
+export interface ProtectedAndPublicRouteProps {
   children: ReactNode;
 }
 

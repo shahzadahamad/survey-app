@@ -7,22 +7,22 @@ import Login from './pages/user/Login';
 import AdminLogin from './pages/admin/Login';
 import Dashboard from './pages/admin/Dashboard';
 import { Toaster } from 'react-hot-toast';
-import { AdminProtectedRoute, ProtectedRoute } from './components/productedRoutes.ts/ProductedRoutes';
+import { AdminProtectedRoute, ProtectedRoute } from './routes/ProductedRoutes';
+import { AdminPublicRoute, PublicRoute } from './routes/PublicRoutes';
+import { ROUTES } from './constants/routes';
 
 function App() {
   return (
     <Router>
-      <Toaster position="top-right" />
+      <Toaster />
       <Routes>
-        <Route path="/" element={<Survey />} />
-        <Route path="/register" element={<Register />} />
-        <Route path="/login" element={<Login />} />
-        <Route path="/admin/login" element={<AdminLogin />} />
-
-        <Route path="/survey-form" element={<ProtectedRoute><SurveyForm /></ProtectedRoute>} />
-        <Route path="/survey-submissions" element={<ProtectedRoute><SurveySubmissions /></ProtectedRoute>} />
-
-        <Route path="/admin/dashboard" element={<AdminProtectedRoute><Dashboard /></AdminProtectedRoute>} />
+        <Route path={ROUTES.USER.HOME} element={<Survey />} />
+        <Route path={ROUTES.USER.REGISTER} element={<PublicRoute><Register /></PublicRoute>} />
+        <Route path={ROUTES.USER.LOGIN} element={<PublicRoute><Login /></PublicRoute>} />
+        <Route path={ROUTES.ADMIN.LOGIN} element={<AdminPublicRoute><AdminLogin /></AdminPublicRoute>} />
+        <Route path={ROUTES.USER.SURVEY_FORM} element={<ProtectedRoute><SurveyForm /></ProtectedRoute>} />
+        <Route path={ROUTES.USER.SURVEY_SUBMISSIONS} element={<ProtectedRoute><SurveySubmissions /></ProtectedRoute>} />
+        <Route path={ROUTES.ADMIN.DASHBOARD} element={<AdminProtectedRoute><Dashboard /></AdminProtectedRoute>} />
       </Routes>
     </Router>
   )
