@@ -36,6 +36,9 @@ const surveySchema: Schema = new Schema(
       required: true,
     },
   },
+  {
+    timestamps: true,
+  }
 );
 
 const SurveyModel = mongoose.model<ISurvey>("Survey", surveySchema);
