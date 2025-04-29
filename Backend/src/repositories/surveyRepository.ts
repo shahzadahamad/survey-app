@@ -9,10 +9,10 @@ export class SurveyRepository extends BaseRepository<ISurvey> implements ISurvey
   }
 
   async findByUserId(userId: string): Promise<ISurvey[]> {
-    return await SurveyModel.find({ userId });
+    return await SurveyModel.find({ userId }).sort({ createdAt: -1 });
   }
 
   async findAll(): Promise<ISurvey[]> {
-    return await SurveyModel.find();
+    return await SurveyModel.find().sort({ createdAt: -1 });
   }
 };
