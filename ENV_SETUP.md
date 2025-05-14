@@ -8,9 +8,11 @@ This guide provides the necessary environment variables required to run the **Su
 
 Create a `.env` file inside the `Backend` directory and add the following:
 
+```env
 PORT=3000  # Backend Port  
 MONGO_URL=your_mongodb_connection_string  # MongoDB connection URL  
-CORS_ORIGIN=http://localhost:5173  # CORS origin (Frontend URL)  
+CORS_ORIGIN=http://localhost:5173  # CORS origin (Frontend URL)
+```
 
 # JWT Settings  
 JWT_SECRET=your_jwt_secret  # JWT Secret key  
@@ -21,7 +23,9 @@ JWT_SECRET=your_jwt_secret  # JWT Secret key
 
 Create a `.env` file inside the `Frontend` directory and add the following:
 
-VITE_API_BASE_URL=http://localhost:3000/api  # Backend API base URL  
+```env
+VITE_API_BASE_URL=http://localhost:3000/api  # Backend API base URL
+```
 
 ---
 
