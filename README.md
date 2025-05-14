@@ -35,35 +35,29 @@ Users can register, log in, submit surveys, and view their submissions. Admins h
 ```bash
 # Clone the repository
 git clone https://github.com/shahzadahamad/survey-app.git
-cd survey-app
 
-# Backend setup
+# Navigate to the backend directory
 cd Backend
+
+# Install backend dependencies
 npm install
 
-# After installing dependencies, create a .env file in the Backend folder with the following environment variables:
-# 
-# PORT=your_port
-# MONGO_URL=your_mongo_url
-# JWT_SECRET=your_jwt_secret
-#
-# Replace `your_port` with your desired backend port (e.g., 5000), `your_mongo_url` with your MongoDB connection URL,
-# and `your_jwt_secret` with a secure JWT secret key for token generation.
+# Set up environment variables (Check out ENV_SETUP.md for details)
+# Ensure you create a .env file in the backend directory
 
 # Start the backend server
 npm run dev &
 
 cd ..
 
-# Frontend setup
-cd Frontend
+# Open a new terminal window and navigate to the frontend directory
+cd ../Frontend
+
+# Install frontend dependencies
 npm install
 
-# After installing dependencies, create a .env file in the Frontend folder with the following environment variable:
-#
-# VITE_API_BASE_URL=http://localhost:3000/api
-#
-# Replace `http://localhost:3000/api` with your backend URL if different.
+# Set up environment variables (Check out ENV_SETUP.md for details)
+# Ensure you create a .env file in the frontend directory
 
-# Start the frontend
+# Start the frontend server
 npm run dev
