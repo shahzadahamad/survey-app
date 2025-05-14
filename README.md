@@ -34,7 +34,7 @@ Users can register, log in, submit surveys, and view their submissions. Admins h
 
 ```bash
 # Clone the repository
-git clone https://github.com/your-username/survey-app.git
+git clone https://github.com/shahzadahamad/survey-app.git
 cd survey-app
 
 # Backend setup
