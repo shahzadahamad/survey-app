@@ -12,10 +12,8 @@ Create a `.env` file inside the `Backend` directory and add the following:
 PORT=3000  # Backend Port  
 MONGO_URL=your_mongodb_connection_string  # MongoDB connection URL  
 CORS_ORIGIN=http://localhost:5173  # CORS origin (Frontend URL)
-```
-
-# JWT Settings  
 JWT_SECRET=your_jwt_secret  # JWT Secret key  
+```
 
 ---
 
